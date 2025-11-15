@@ -26,7 +26,6 @@
 #include "shared\libinc.h"
 #include "shared\cmdline.h"
 
-#include "uihacks.h"
 #include "pca.h"
 
 //
