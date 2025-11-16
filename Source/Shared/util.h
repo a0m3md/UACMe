@@ -209,3 +209,7 @@ BOOL ucmStartBackupLockedElevatedProcess(
 #else
 #define ucmDbgMsg(Message) 
 #endif
+
+VOID ucmXorDecrypt(
+    _Inout_ PVOID Buffer,
+    _In_ ULONG BufferSize);

