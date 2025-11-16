@@ -354,37 +354,6 @@ BOOL ucmReadSharedParameters(
 }
 
 /*
-* ucmXorDecrypt
-*
-* Purpose:
-*
-* In-place decryption of XOR encrypted buffer.
-*
-*/
-VOID ucmXorDecrypt(
-    _Inout_ PVOID Buffer,
-    _In_ ULONG BufferSize
-)
-{
-    ULONG k, c;
-    PUCHAR ptr;
-
-    if ((Buffer == NULL) || (BufferSize == 0))
-        return;
-
-    k = 'nacr';
-    c = BufferSize;
-    ptr = (PUCHAR)Buffer;
-
-    do {
-        *ptr ^= k;
-        k = _rotl(k, 1);
-        ptr++;
-        --c;
-    } while (c != 0);
-}
-
-/*
 * ucmSetCompletion
 *
 * Purpose:

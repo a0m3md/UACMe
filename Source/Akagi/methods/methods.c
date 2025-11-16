@@ -625,7 +625,7 @@ UCM_API(MethodDebugObject)
     else
         lpszPayload = g_ctx->szOptionalParameter;
 
-    return ucmMasqueradeProcess(lpszPayload);
+    return ucmDebugObjectMethod(lpszPayload);
 }
 
 UCM_API(MethodShellChangePk)

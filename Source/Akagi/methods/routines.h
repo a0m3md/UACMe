@@ -149,7 +149,7 @@ NTSTATUS ucmTokenModUIAccessMethod2(
     _In_ PVOID ProxyDll,
     _In_ DWORD ProxyDllSize);
 
-NTSTATUS ucmMasqueradeProcess(
+NTSTATUS ucmDebugObjectMethod(
     _In_ LPWSTR lpszPayload);
 
 NTSTATUS ucmVFServerTaskSchedMethod(
@@ -214,25 +214,3 @@ VOID ucmWusaCabinetCleanup(
 
 VOID ucmIscsiCplMethodCleanup(
     VOID);
-
-typedef NTSTATUS(NTAPI* pfnNtCreateDebugObject)(
-    _Out_ PHANDLE DebugObjectHandle,
-    _In_ ACCESS_MASK DesiredAccess,
-    _In_ POBJECT_ATTRIBUTES ObjectAttributes,
-    _In_ ULONG Flags);
-
-typedef NTSTATUS(NTAPI* pfnNtRemoveProcessDebug)(
-    _In_ HANDLE ProcessHandle,
-    _In_ HANDLE DebugObjectHandle);
-
-typedef BOOL(WINAPI* pfnWaitForDebugEvent)(
-    _Out_ LPDEBUG_EVENT lpDebugEvent,
-    _In_ DWORD dwMilliseconds);
-
-typedef BOOL(WINAPI* pfnContinueDebugEvent)(
-    _In_ DWORD dwProcessId,
-    _In_ DWORD dwThreadId,
-    _In_ DWORD dwContinueStatus);
-
-typedef NTSTATUS(NTAPI* pfnDbgUiSetThreadDebugObject)(
-    _In_ HANDLE DebugObject);
