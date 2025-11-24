@@ -25,7 +25,7 @@
 #define RDATA_SECTION ".rdata"
 #define RDATA_SECTION_LENGTH sizeof(RDATA_SECTION)
 
-#define TestChar(x)  (((WCHAR)x >= L'A') && ((WCHAR)x <= L'z')) 
+#define TestChar(x)  (((WCHAR)x >= L'A') && ((WCHAR)x <= L'z'))
 
 /*
 * GetAppInfoBuildVersion

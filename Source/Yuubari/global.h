@@ -59,4 +59,3 @@ typedef VOID(WINAPI *OUTPUTCALLBACK)(PVOID OutputData);
 
 extern ULONG g_NtBuildNumber;
 extern BOOL g_VerboseOutput;
-

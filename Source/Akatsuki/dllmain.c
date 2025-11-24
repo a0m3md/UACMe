@@ -10,7 +10,7 @@
 *
 *  Proxy dll entry point, Akatsuki.
 *  Special dll for wow64 logger method.
-* 
+*
 *  WARNING: real wow64log must have native subsystem and only ntdll export.
 *  This one will force crash and propagate to WER process elevating to NTAuthority/System.
 *
@@ -226,7 +226,7 @@ BOOL WINAPI DllMain(
 
     if (fdwReason == DLL_PROCESS_ATTACH) {
 
-        LdrDisableThreadCalloutsForDll(hinstDLL);      
+        LdrDisableThreadCalloutsForDll(hinstDLL);
         DefaultPayload();
 
     }

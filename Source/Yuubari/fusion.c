@@ -578,14 +578,14 @@ VOID FusionCheckFile(
         if (NT_SUCCESS(status)) {
 
             //
-            // Actually appinfo only looks for 'T' or 't' symbol 
+            // Actually appinfo only looks for 'T' or 't' symbol
             // for performance reasons perhaps
             //
             if (_strcmpi(szValue, TEXT("true")) == 0)
                 FusionCommonData.AutoElevateState = AutoElevateEnabled;
             else
                 //
-                // Several former autoelevate applications has autoelevated strictly 
+                // Several former autoelevate applications has autoelevated strictly
                 // disabled in manifest as part of their UAC fixes.
                 //
                 if (_strcmpi(szValue, TEXT("false")) == 0)
@@ -601,7 +601,7 @@ VOID FusionCheckFile(
             }
 
             //
-            // Query settings failed, check if it known error like sxs key not exist.         
+            // Query settings failed, check if it known error like sxs key not exist.
             //
             if (status != STATUS_SXS_KEY_NOT_FOUND) {
                 RtlSecureZeroMemory(szValue, sizeof(szValue));
@@ -625,7 +625,7 @@ VOID FusionCheckFile(
 
         //
         // Print redirection dlls from activation context
-        //       
+        //
         FusionProbeForRedirectedDlls(FileName, (PACTIVATION_CONTEXT)hActCtx, OutputCallback);
 
 

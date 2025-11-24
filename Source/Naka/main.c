@@ -1129,10 +1129,10 @@ VOID CreateSecretTables(VOID)
     if (ProcessUnit(szFileName, IDR_FUBUKI32, &S[c]))
         c++;
 
-    szFileName[l] = 0;
-    _strcat(&szFileName[l], L"Kamikaze.key");
-    if (ProcessUnit(szFileName, IDR_KAMIKAZE64, &S[c]))
-        c++;
+    //szFileName[l] = 0;
+    //_strcat(&szFileName[l], L"Kamikaze.key");
+    //if (ProcessUnit(szFileName, IDR_KAMIKAZE64, &S[c]))
+    //    c++;
 
     EncodeBuffer(S, c * sizeof(DCK_HEADER));
     szFileName[l] = 0;
@@ -1149,10 +1149,10 @@ VOID CreateSecretTables(VOID)
     if (ProcessUnit(szFileName, IDR_FUBUKI32, &S[c]))
         c++;
 
-    szFileName[l] = 0;
-    _strcat(&szFileName[l], L"Kamikaze.key");
-    if (ProcessUnit(szFileName, IDR_KAMIKAZE, &S[c]))
-        c++;
+    //szFileName[l] = 0;
+    //_strcat(&szFileName[l], L"Kamikaze.key");
+    //if (ProcessUnit(szFileName, IDR_KAMIKAZE, &S[c]))
+    //    c++;
 
     EncodeBuffer(S, c * sizeof(DCK_HEADER));
     szFileName[l] = 0;

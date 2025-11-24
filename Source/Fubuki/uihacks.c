@@ -21,7 +21,7 @@
 
 #ifdef FUBUKI_TRACE_CALL
 VOID ucmxSendInput(
-    _In_ UINT cInputs,                  
+    _In_ UINT cInputs,
     _In_reads_(cInputs) LPINPUT pInputs,
     _In_ int cbSize)
 {

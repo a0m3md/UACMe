@@ -307,7 +307,7 @@ VOID WINAPI EntryPointUIAccessLoader2(
         RtlExitUserProcess('foff');
     }
     ucmUIHackExecute2();
-    
+
     RtlExitUserProcess(0);
 }
 

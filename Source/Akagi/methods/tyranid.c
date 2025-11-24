@@ -466,6 +466,7 @@ NTSTATUS ucmDebugObjectMethod(
             status = STATUS_UNSUCCESSFUL;
             break;
         }
+        Sleep(200);
 
         //
         // Capture debug object handle.
@@ -486,6 +487,7 @@ NTSTATUS ucmDebugObjectMethod(
         // Detach debug and kill non elevated victim process.
         //
         NtRemoveProcessDebug(procInfo.hProcess, dbgHandle);
+        Sleep(100);
         TerminateProcess(procInfo.hProcess, 0);
         CloseHandle(procInfo.hThread);
         CloseHandle(procInfo.hProcess);

@@ -309,7 +309,7 @@ BOOL supConcatenatePaths(
     while (Target[TargetLength] != 0 && TargetLength < TargetBufferSize)
         TargetLength++;
 
-    if (TargetLength >= TargetBufferSize) 
+    if (TargetLength >= TargetBufferSize)
         return FALSE;
 
     PathLength = 0;

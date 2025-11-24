@@ -666,7 +666,7 @@ UCM_API(MethodNICPoison)
             Parameter->PayloadSize);
 
     }
-    else 
+    else
         return STATUS_NOT_SUPPORTED;
 #endif
 }
@@ -732,11 +732,11 @@ UCM_API(MethodProtocolHijack)
         PayloadParameter = g_ctx->szOptionalParameter;
 
     switch (Parameter->Method) {
-    
+
     case UacMethodMsSettingsProtocol:
         Result = ucmMsSettingsProtocolMethod(PayloadParameter);
         break;
-    
+
     case UacMethodMsStoreProtocol:
 
         Size = ((MAX_PATH * 2) + _strlen(PayloadParameter)) * sizeof(WCHAR);

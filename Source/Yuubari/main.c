@@ -264,7 +264,7 @@ VOID WINAPI FusionOutputCallback(
                 lpText = TEXT("unspecified");
                 break;
             }
-            //RequestedExecutionLevel 
+            //RequestedExecutionLevel
             LoggerWrite(g_LogFile, lpText, TRUE);
 
             if (Data->RunLevel.UiAccess > 0) {
